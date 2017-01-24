@@ -144,9 +144,11 @@
 	  }
 	
 	  propel(rowdir) {
-	    if (Util.speed(this.vel) < 5) {
-	      this.vel[0] += rowdir[0];
-	      this.vel[1] += rowdir[1];
+	    let nextvelX = this.vel[0] + rowdir[0];
+	    let nextvelY = this.vel[1] + rowdir[1];
+	    if (Util.speed([nextvelX, nextvelY]) < 5 ) {
+	      this.vel[0] = nextvelX;
+	      this.vel[1] = nextvelY;
 	    }
 	  }
 	}
