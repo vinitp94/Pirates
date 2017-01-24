@@ -70,6 +70,8 @@
 	    this.mines = [];
 	    this.coins = [];
 	    this.ships = [];
+	    this.max_width = Game.DIM_X;
+	    this.max_height = Game.DIM_Y;
 	  }
 	
 	  add(obj) {
@@ -118,9 +120,9 @@
 	  }
 	}
 	
-	Game.BG_COLOR = '#f5f5f5';
 	Game.DIM_X = 1000;
 	Game.DIM_Y = 600;
+	Game.BG_COLOR = '#f5f5f5';
 	
 	module.exports = Game;
 
@@ -142,8 +144,10 @@
 	  }
 	
 	  propel(rowdir) {
-	    this.vel[0] += rowdir[0];
-	    this.vel[1] += rowdir[1];
+	    if (Util.speed(this.vel) < 5) {
+	      this.vel[0] += rowdir[0];
+	      this.vel[1] += rowdir[1];
+	    }
 	  }
 	}
 	
@@ -172,6 +176,12 @@
 	
 	  scale (vec, m) {
 	    return [vec[0] * m, vec[1] * m];
+	  },
+	
+	  speed (vel) {
+	    return Math.sqrt(
+	      Math.pow(vel[0], 2) + Math.pow(vel[1], 2)
+	    );
 	  }
 	};
 	
@@ -183,6 +193,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Util = __webpack_require__(3);
+	const Game = __webpack_require__(1);
 	
 	const FRAME_DELTA = 1000/60;
 	
@@ -216,6 +227,24 @@
 	    let offsetY = this.vel[1] * velScale;
 	
 	    this.pos = [this.pos[0] + offsetX, this.pos[1] + offsetY];
+	
+	    if (this.pos[0] < this.radius) {
+	      debugger
+	      this.pos[0] = this.radius;
+	      this.vel = [0, 0];
+	    } else if (this.pos[0] > (this.game.max_width - this.radius)) {
+	      debugger
+	      this.pos[0] = this.game.max_width - this.radius;
+	      this.vel = [0, 0];
+	    } else if (this.pos[1] < this.radius) {
+	      debugger
+	      this.pos[1] = this.radius;
+	      this.vel = [0, 0];
+	    } else if (this.pos[1] > (this.game.max_height - this.radius)) {
+	      debugger
+	      this.pos[1] = this.game.max_height - this.radius;
+	      this.vel = [0, 0];
+	    }
 	  }
 	
 	  remove() {
