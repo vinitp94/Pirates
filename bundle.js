@@ -63,6 +63,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Ship = __webpack_require__(2);
+	const Coin = __webpack_require__(6);
 	const Util = __webpack_require__(3);
 	
 	class Game {
@@ -72,12 +73,25 @@
 	    this.ships = [];
 	    this.max_width = Game.DIM_X;
 	    this.max_height = Game.DIM_Y;
+	
+	    this.addCoin();
 	  }
 	
 	  add(obj) {
 	    if (obj instanceof Ship) {
 	      this.ships.push(obj);
+	    } else if (obj instanceof Coin) {
+	      this.coins.push(obj);
 	    }
+	  }
+	
+	  addCoin() {
+	    const coin = new Coin({
+	      game: this
+	    });
+	
+	    this.add(coin);
+	    return coin;
 	  }
 	
 	  addShip() {
@@ -87,6 +101,13 @@
 	
 	    this.add(ship);
 	    return ship;
+	  }
+	
+	  randomPosition() {
+	    return [
+	      Game.DIM_X * Math.random(),
+	      Game.DIM_Y * Math.random()
+	    ];
 	  }
 	
 	  allObjects() {
@@ -106,7 +127,6 @@
 	    ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
 	    ctx.fillStyle = Game.BG_COLOR;
 	    ctx.fillRect(0, 0, Game.DIM_X, Game.DIM_Y);
-	
 	    this.allObjects().forEach((obj) => {
 	      obj.draw(ctx);
 	    });
@@ -247,9 +267,9 @@
 	  constructor(options) {
 	    this.pos = options.pos;
 	    this.dir = options.dir;
+	    this.color = options.color;
 	    this.speed = options.speed;
 	    this.radius = options.radius;
-	    this.color = options.color;
 	    this.game = options.game;
 	    this.img = options.img;
 	    this.vel = Util.calcVel(this.dir, this.speed);
@@ -260,7 +280,7 @@
 	  //
 	  //   ctx.beginPath();
 	  //   ctx.arc(
-	  //     this.pos[0], this.pos[1], this.radius, 0, 1 * Math.PI, true
+	  //     this.pos[0], this.pos[1], this.radius, 0, 2 * Math.PI, true
 	  //   );
 	  //   ctx.fill();
 	  // }
@@ -345,6 +365,37 @@
 	GameView.DIRS = ['up', 'down', 'left', 'right'];
 	
 	module.exports = GameView;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const MovingObject = __webpack_require__(4);
+	
+	class Coin extends MovingObject {
+	  constructor(options = {}) {
+	    options.color = '#ffd700';
+	    options.pos = options.game.randomPosition();
+	    options.radius = 10;
+	    options.dir = [1, 0];
+	    options.speed = 0;
+	    options.vel = [0, 0];
+	    super(options);
+	  }
+	
+	  draw(ctx) {
+	    ctx.fillStyle = this.color;
+	
+	    ctx.beginPath();
+	    ctx.arc(
+	      this.pos[0], this.pos[1], this.radius, 0, 2 * Math.PI, true
+	    );
+	    ctx.fill();
+	  }
+	}
+	
+	module.exports = Coin;
 
 
 /***/ }
