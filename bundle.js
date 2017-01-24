@@ -97,6 +97,9 @@
 	    this.allObjects().forEach((obj) => {
 	      obj.move(delta);
 	    });
+	    this.ships.forEach((ship) => {
+	      ship.drag();
+	    });
 	  }
 	
 	  draw(ctx) {
@@ -139,17 +142,34 @@
 	    options.color = '#000000';
 	    options.pos = [500, 500];
 	    options.radius = 10;
-	    options.vel = [0, 0];
+	    options.dir = [0, 1];
+	    options.speed = 0;
 	    super(options);
 	  }
 	
-	  propel(rowdir) {
-	    let nextvelX = this.vel[0] + rowdir[0];
-	    let nextvelY = this.vel[1] + rowdir[1];
-	    if (Util.speed([nextvelX, nextvelY]) < 5 ) {
-	      this.vel[0] = nextvelX;
-	      this.vel[1] = nextvelY;
+	  propel(impulse) {
+	    if (impulse === 'up' && this.speed > -9) {
+	      this.speed -= 1;
+	      this.vel = Util.calcVel(this.dir, this.speed);
+	    } else if (impulse === 'down' && this.speed < 9) {
+	      this.speed += 1;
+	      this.vel = Util.calcVel(this.dir, this.speed);
+	    } else if (impulse === 'left') {
+	      this.dir = Util.rotate(this.dir, -0.2);
+	      this.vel = Util.calcVel(this.dir, this.speed);
+	    } else if (impulse === 'right') {
+	      this.dir = Util.rotate(this.dir, 0.2);
+	      this.vel = Util.calcVel(this.dir, this.speed);
 	    }
+	  }
+	
+	  drag() {
+	    if (this.speed > 0) {
+	      this.speed -= 0.1;
+	    } else if (this.speed < 0) {
+	      this.speed += 0.1;
+	    }
+	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	}
 	
@@ -172,6 +192,10 @@
 	    );
 	  },
 	
+	  calcVel (dir, speed) {
+	    return [dir[0] * speed, dir[1] * speed];
+	  },
+	
 	  norm (vec) {
 	    return Util.dist([0, 0], vec);
 	  },
@@ -184,6 +208,12 @@
 	    return Math.sqrt(
 	      Math.pow(vel[0], 2) + Math.pow(vel[1], 2)
 	    );
+	  },
+	
+	  rotate (dir, rad) {
+	    let newX = (dir[0] * Math.cos(rad)) - (dir[1] * Math.sin(rad));
+	    let newY = (dir[1] * Math.cos(rad)) + (dir[0] * Math.sin(rad));
+	    return [newX, newY];
 	  }
 	};
 	
@@ -202,10 +232,12 @@
 	class MovingObject {
 	  constructor(options) {
 	    this.pos = options.pos;
-	    this.vel = options.vel;
+	    this.dir = options.dir;
+	    this.speed = options.speed;
 	    this.radius = options.radius;
 	    this.color = options.color;
 	    this.game = options.game;
+	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	
 	  draw(ctx) {
@@ -213,15 +245,15 @@
 	
 	    ctx.beginPath();
 	    ctx.arc(
-	      this.pos[0], this.pos[1], this.radius, 0, 2 * Math.PI, true
+	      this.pos[0], this.pos[1], this.radius, 0, 1 * Math.PI, true
 	    );
 	    ctx.fill();
 	  }
 	
-	  isCollidedWith(otherObject) {
-	    const centerDist = Util.dist(this.pos, otherObject.pos);
-	    return centerDist < (this.radius + otherObject.radius);
-	  }
+	  // isCollidedWith(otherObject) {
+	  //   const centerDist = Util.dist(this.pos, otherObject.pos);
+	  //   return centerDist < (this.radius + otherObject.radius);
+	  // }
 	
 	  move(delta) {
 	    const velScale = delta / FRAME_DELTA;
@@ -231,21 +263,21 @@
 	    this.pos = [this.pos[0] + offsetX, this.pos[1] + offsetY];
 	
 	    if (this.pos[0] < this.radius) {
-	      debugger
 	      this.pos[0] = this.radius;
-	      this.vel = [0, 0];
+	      this.speed = 0;
+	      this.vel = Util.calcVel(this.dir, this.speed);
 	    } else if (this.pos[0] > (this.game.max_width - this.radius)) {
-	      debugger
 	      this.pos[0] = this.game.max_width - this.radius;
-	      this.vel = [0, 0];
+	      this.speed = 0;
+	      this.vel = Util.calcVel(this.dir, this.speed);
 	    } else if (this.pos[1] < this.radius) {
-	      debugger
 	      this.pos[1] = this.radius;
-	      this.vel = [0, 0];
+	      this.speed = 0;
+	      this.vel = Util.calcVel(this.dir, this.speed);
 	    } else if (this.pos[1] > (this.game.max_height - this.radius)) {
-	      debugger
 	      this.pos[1] = this.game.max_height - this.radius;
-	      this.vel = [0, 0];
+	      this.speed = 0;
+	      this.vel = Util.calcVel(this.dir, this.speed);
 	    }
 	  }
 	
@@ -271,10 +303,9 @@
 	  bindKeyHandlers() {
 	    const ship = this.ship;
 	
-	    Object.keys(GameView.DIRS).forEach((k) => {
-	      let rowdir = GameView.DIRS[k];
+	    GameView.DIRS.forEach((k) => {
 	      key(k, () => {
-	        ship.propel(rowdir);
+	        ship.propel(k);
 	      });
 	    });
 	  }
@@ -296,12 +327,7 @@
 	  }
 	}
 	
-	GameView.DIRS = {
-	  'up': [0, -1],
-	  'down': [0, 1],
-	  'left': [-1, 0],
-	  'right': [1, 0]
-	};
+	GameView.DIRS = ['up', 'down', 'left', 'right'];
 	
 	module.exports = GameView;
 
