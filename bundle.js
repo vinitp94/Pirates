@@ -163,6 +163,11 @@
 	    }
 	  }
 	
+	  draw(ctx) {
+	    var img = document.getElementById('myship');
+	    ctx.drawImage(img, this.pos[0], this.pos[1], 30, 30);
+	  }
+	
 	  drag() {
 	    if (this.speed > 0) {
 	      this.speed -= 0.1;
@@ -240,15 +245,15 @@
 	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	
-	  draw(ctx) {
-	    ctx.fillStyle = this.color;
-	
-	    ctx.beginPath();
-	    ctx.arc(
-	      this.pos[0], this.pos[1], this.radius, 0, 1 * Math.PI, true
-	    );
-	    ctx.fill();
-	  }
+	  // draw(ctx) {
+	  //   ctx.fillStyle = this.color;
+	  //
+	  //   ctx.beginPath();
+	  //   ctx.arc(
+	  //     this.pos[0], this.pos[1], this.radius, 0, 1 * Math.PI, true
+	  //   );
+	  //   ctx.fill();
+	  // }
 	
 	  // isCollidedWith(otherObject) {
 	  //   const centerDist = Util.dist(this.pos, otherObject.pos);
