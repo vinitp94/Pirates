@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Game = __webpack_require__(1);
-	const GameView = __webpack_require__(6);
+	const GameView = __webpack_require__(5);
 	
 	document.addEventListener('DOMContentLoaded', function() {
 	  const canvasEl = document.getElementsByTagName('canvas')[0];
@@ -63,7 +63,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Ship = __webpack_require__(2);
-	const Util = __webpack_require__(5);
+	const Util = __webpack_require__(3);
 	
 	class Game {
 	  constructor() {
@@ -129,16 +129,21 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Util = __webpack_require__(5);
-	const MovingObject = __webpack_require__(3);
+	const Util = __webpack_require__(3);
+	const MovingObject = __webpack_require__(4);
 	
 	class Ship extends MovingObject {
 	  constructor(options = {}) {
 	    options.color = '#000000';
-	    options.pos = [0, 0];
-	    options.radius = 20;
+	    options.pos = [500, 500];
+	    options.radius = 10;
 	    options.vel = [0, 0];
 	    super(options);
+	  }
+	
+	  propel(rowdir) {
+	    this.vel[0] += rowdir[0];
+	    this.vel[1] += rowdir[1];
 	  }
 	}
 	
@@ -147,9 +152,37 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	const Util = {
+	  dir (vec) {
+	    const norm = Util.norm(vec);
+	    return Util.scale(vec, 1 / norm);
+	  },
+	
+	  dist (pos1, pos2) {
+	    return Math.sqrt(
+	      Math.pow(pos1[0] - pos2[0], 2) + Math.pow(pos1[1] - pos2[1], 2)
+	    );
+	  },
+	
+	  norm (vec) {
+	    return Util.dist([0, 0], vec);
+	  },
+	
+	  scale (vec, m) {
+	    return [vec[0] * m, vec[1] * m];
+	  }
+	};
+	
+	module.exports = Util;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Util = __webpack_require__(5);
+	const Util = __webpack_require__(3);
 	
 	const FRAME_DELTA = 1000/60;
 	
@@ -194,36 +227,7 @@
 
 
 /***/ },
-/* 4 */,
 /* 5 */
-/***/ function(module, exports) {
-
-	const Util = {
-	  dir (vec) {
-	    const norm = Util.norm(vec);
-	    return Util.scale(vec, 1 / norm);
-	  },
-	
-	  dist (pos1, pos2) {
-	    return Math.sqrt(
-	      Math.pow(pos1[0] - pos2[0], 2) + Math.pow(pos1[1] - pos2[1], 2)
-	    );
-	  },
-	
-	  norm (vec) {
-	    return Util.dist([0, 0], vec);
-	  },
-	
-	  scale (vec, m) {
-	    return [vec[0] * m, vec[1] * m];
-	  }
-	};
-	
-	module.exports = Util;
-
-
-/***/ },
-/* 6 */
 /***/ function(module, exports) {
 
 	class GameView {
@@ -233,19 +237,19 @@
 	    this.ship = this.game.addShip();
 	  }
 	
-	  // bindKeyHandlers() {
-	  //   const ship = this.ship;
-	  //
-	  //   Object.keys(GameView.MOVES).forEach((k) => {
-	  //     let move = GameView.MOVES[k];
-	  //     key(k, () => {
-	  //       ship.power(move);
-	  //     });
-	  //   });
-	  // }
+	  bindKeyHandlers() {
+	    const ship = this.ship;
+	
+	    Object.keys(GameView.DIRS).forEach((k) => {
+	      let rowdir = GameView.DIRS[k];
+	      key(k, () => {
+	        ship.propel(rowdir);
+	      });
+	    });
+	  }
 	
 	  start() {
-	    // this.bindKeyHandlers();
+	    this.bindKeyHandlers();
 	    this.prevTime = 0;
 	    requestAnimationFrame(this.animate.bind(this));
 	  }
@@ -261,9 +265,12 @@
 	  }
 	}
 	
-	// GameView.MOVES = {
-	//   ''
-	// }
+	GameView.DIRS = {
+	  'up': [0, -1],
+	  'down': [0, 1],
+	  'left': [-1, 0],
+	  'right': [1, 0]
+	};
 	
 	module.exports = GameView;
 
