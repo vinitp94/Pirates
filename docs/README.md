@@ -10,6 +10,7 @@ In this game of Pirates, users will be able to:
 
 - [ ] Start, pause, and reset the game
 - [ ] Keep track of their total score
+- [ ] Play by moving player using four arrow keys
 
 The project will also include:
 
