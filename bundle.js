@@ -64,6 +64,7 @@
 
 	const Ship = __webpack_require__(2);
 	const Coin = __webpack_require__(6);
+	const Mine = __webpack_require__(7);
 	const Util = __webpack_require__(3);
 	
 	class Game {
@@ -102,6 +103,15 @@
 	    return ship;
 	  }
 	
+	  addMine() {
+	    const mine = new Mine({
+	      game: this
+	    });
+	
+	    this.mines.push(mine);
+	    return mine;
+	  }
+	
 	  randomPosition() {
 	    return [
 	      Game.DIM_X * Math.random(),
@@ -137,6 +147,7 @@
 	    if (this.coin.isCollidedWith(this.ship)) {
 	      this.remove(this.coin);
 	      this.score += 1;
+	      this.addMine();
 	    }
 	  }
 	
@@ -205,9 +216,6 @@
 	    ctx.drawImage(this.img, this.pos[0], this.pos[1], 30, 30);
 	  }
 	
-	  isCollidedWith(otherObj) {
-	
-	  }
 	
 	  // drag() {
 	  //   if (this.speed > 0) {
@@ -413,6 +421,31 @@
 	}
 	
 	module.exports = Coin;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const Util = __webpack_require__(3);
+	const MovingObject = __webpack_require__(4);
+	
+	class Mine extends MovingObject {
+	  constructor(options = {}) {
+	    options.pos = options.game.randomPosition();
+	    options.radius = 15;
+	    options.dir = [0, 1];
+	    options.speed = 0;
+	    options.img = document.getElementById('mymine');
+	    super(options);
+	  }
+	
+	  draw(ctx) {
+	    ctx.drawImage(this.img, this.pos[0], this.pos[1], 30, 30);
+	  }
+	}
+	
+	module.exports = Mine;
 
 
 /***/ }
