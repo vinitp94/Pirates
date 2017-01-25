@@ -178,6 +178,7 @@
 	    this.moveObjects(delta);
 	    this.findCoin();
 	    this.explodeMines();
+	    this.ship.drag();
 	  }
 	}
 	
@@ -232,10 +233,10 @@
 	    ctx.restore();
 	  }
 	
-	  // drag() {
-	  //   this.speed *= 0.99;
-	  //   this.vel = Util.calcVel(this.dir, this.speed);
-	  // }
+	  drag() {
+	    this.speed *= 0.999;
+	    this.vel = Util.calcVel(this.dir, this.speed);
+	  }
 	}
 	
 	module.exports = Ship;
