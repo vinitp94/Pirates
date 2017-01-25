@@ -77,23 +77,6 @@
 	    this.score = 0;
 	  }
 	
-	  // add(obj) {
-	  //   if (obj instanceof Ship) {
-	  //     this.ships.push(obj);
-	  //   } else if (obj instanceof Coin) {
-	  //     this.coins.push(obj);
-	  //   }
-	  // }
-	
-	  // addCoin() {
-	  //   const coin = new Coin({
-	  //     game: this
-	  //   });
-	  //
-	  //   this.add(coin);
-	  //   return coin;
-	  // }
-	
 	  addShip() {
 	    const ship = new Ship({
 	      game: this
@@ -180,9 +163,10 @@
 	class Ship extends MovingObject {
 	  constructor(options = {}) {
 	    options.pos = [500, 500];
-	    options.radius = 15;
 	    options.dir = [0, 1];
 	    options.speed = 0;
+	    options.width = 30;
+	    options.height = 30;
 	    options.img = document.getElementById('myship');
 	    super(options);
 	  }
@@ -194,11 +178,10 @@
 	      this.speed += 1.5;
 	    } else if (impulse === 'left') {
 	      this.dir = Util.rotate(this.dir, -0.2);
-	      console.log(this.dir);
-	      this.rotate(ctx, -0.2, this.img);
+	      // this.rotate(ctx, -0.2, this.img);
 	    } else if (impulse === 'right') {
 	      this.dir = Util.rotate(this.dir, 0.2);
-	      this.rotate(ctx, 0.2, this.img);
+	      // this.rotate(ctx, 0.2, this.img);
 	    }
 	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
@@ -211,11 +194,6 @@
 	    // this.draw(ctx);
 	    // ctx.restore();
 	  }
-	
-	  draw(ctx) {
-	    ctx.drawImage(this.img, this.pos[0], this.pos[1], 30, 30);
-	  }
-	
 	
 	  // drag() {
 	  //   if (this.speed > 0) {
@@ -236,8 +214,6 @@
 
 	const Util = {
 	  dir (ref, target) {
-	    // const norm = Util.norm(vec);
-	    // return Util.scale(vec, 1 / norm);
 	    let dirVec = [target[0] - ref[0], target[1] - ref[1]];
 	    const norm = Util.norm(dirVec);
 	    return Util.scale(dirVec, 1 / norm);
@@ -295,23 +271,14 @@
 	    this.radius = options.radius;
 	    this.game = options.game;
 	    this.img = options.img;
+	    this.width = options.width;
+	    this.height = options.height;
 	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	
-	  // draw(ctx) {
-	  //   ctx.fillStyle = this.color;
-	  //
-	  //   ctx.beginPath();
-	  //   ctx.arc(
-	  //     this.pos[0], this.pos[1], this.radius, 0, 2 * Math.PI, true
-	  //   );
-	  //   ctx.fill();
-	  // }
-	
-	  // isCollidedWith(otherObject) {
-	  //   const centerDist = Util.dist(this.pos, otherObject.pos);
-	  //   return centerDist < (this.radius + otherObject.radius);
-	  // }
+	  draw(ctx) {
+	    ctx.drawImage(this.img, this.pos[0], this.pos[1], this.width, this.height);
+	  }
 	
 	  move(delta) {
 	    const velScale = delta / FRAME_DELTA;
@@ -319,34 +286,30 @@
 	    let offsetY = this.vel[1] * velScale;
 	
 	    this.pos = [this.pos[0] + offsetX, this.pos[1] + offsetY];
-	
-	    if (this.pos[0] < this.radius) {
-	      this.pos[0] = this.radius;
+	    if (this.pos[0] < 0) {
+	      this.pos[0] = 0;
 	      this.speed = 0;
-	      this.vel = Util.calcVel(this.dir, this.speed);
-	    } else if (this.pos[0] > (this.game.max_width - this.radius)) {
-	      this.pos[0] = this.game.max_width - this.radius;
+	    } else if (this.pos[0] > (this.game.max_width - this.width)) {
+	      this.pos[0] = this.game.max_width - this.width;
 	      this.speed = 0;
-	      this.vel = Util.calcVel(this.dir, this.speed);
-	    } else if (this.pos[1] < this.radius) {
-	      this.pos[1] = this.radius;
+	    } else if (this.pos[1] < 0) {
+	      this.pos[1] = 0;
 	      this.speed = 0;
-	      this.vel = Util.calcVel(this.dir, this.speed);
-	    } else if (this.pos[1] > (this.game.max_height - this.radius)) {
-	      this.pos[1] = this.game.max_height - this.radius;
+	    } else if (this.pos[1] > (this.game.max_height - this.height)) {
+	      this.pos[1] = this.game.max_height - this.height;
 	      this.speed = 0;
-	      this.vel = Util.calcVel(this.dir, this.speed);
 	    }
+	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	
 	  isCollidedWith(otherObject) {
-	    const centerDist = Util.dist(this.pos, otherObject.pos);
-	    return centerDist < (this.radius + otherObject.radius);
+	    let selfCenter = [this.pos[0] + (this.width / 2),
+	      this.pos[1] + (this.height / 2)];
+	    let otherCenter = [otherObject.pos[0] + (otherObject.width / 2),
+	      otherObject.pos[1] + (otherObject.height / 2)];
+	    let centerDist = Util.dist(selfCenter, otherCenter);
+	    return centerDist < (this.width / 2 + otherObject.width / 2);
 	  }
-	
-	  // remove() {
-	  //   this.game.remove(this);
-	  // }
 	}
 	
 	module.exports = MovingObject;
@@ -409,17 +372,10 @@
 	    options.radius = 10;
 	    options.dir = [1, 0];
 	    options.speed = 0;
+	    options.width = 20;
+	    options.height = 20;
+	    options.img = document.getElementById('mycoin');
 	    super(options);
-	  }
-	
-	  draw(ctx) {
-	    ctx.fillStyle = this.color;
-	
-	    ctx.beginPath();
-	    ctx.arc(
-	      this.pos[0], this.pos[1], this.radius, 0, 2 * Math.PI, true
-	    );
-	    ctx.fill();
 	  }
 	}
 	
@@ -436,15 +392,12 @@
 	class Mine extends MovingObject {
 	  constructor(options = {}) {
 	    options.pos = options.game.randomPosition();
-	    options.radius = 15;
 	    options.dir = [0, 1];
 	    options.speed = 0;
+	    options.width = 30;
+	    options.height = 30;
 	    options.img = document.getElementById('mymine');
 	    super(options);
-	  }
-	
-	  draw(ctx) {
-	    ctx.drawImage(this.img, this.pos[0], this.pos[1], 30, 30);
 	  }
 	
 	  stalk(shipPos) {
