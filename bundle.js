@@ -59,13 +59,6 @@
 	
 	document.addEventListener('DOMContentLoaded', newGame);
 	
-	// const resetBtn = document.getElementById('play-again');
-	//
-	// if (resetBtn) {
-	//   debugger
-	//   resetBtn.addEventListener('click', newGame);
-	// }
-	
 	document.getElementById('reset').addEventListener('click', newGame);
 
 
@@ -229,7 +222,11 @@
 	  draw(ctx) {
 	    ctx.save();
 	    ctx.translate(this.pos[0], this.pos[1]);
-	    ctx.rotate(Util.angle(this.dir) - 1.5708);
+	    if (this.dir[0] < 0) {
+	      ctx.rotate(Util.angle(this.dir) + 1.5708);
+	    } else {
+	      ctx.rotate(Util.angle(this.dir) - 1.5708);
+	    }
 	    ctx.translate(-this.pos[0], -this.pos[1]);
 	    ctx.drawImage(this.img, this.pos[0] - this.width / 2, this.pos[1] - this.height / 2, this.width, this.height);
 	    ctx.restore();
