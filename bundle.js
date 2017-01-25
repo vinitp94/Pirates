@@ -47,7 +47,7 @@
 	const Game = __webpack_require__(1);
 	const GameView = __webpack_require__(5);
 	
-	document.addEventListener('DOMContentLoaded', function() {
+	const newGame = () => {
 	  const canvasEl = document.getElementsByTagName('canvas')[0];
 	  canvasEl.width = Game.DIM_X;
 	  canvasEl.height = Game.DIM_Y;
@@ -55,7 +55,18 @@
 	  const ctx = canvasEl.getContext('2d');
 	  const game = new Game();
 	  new GameView(game, ctx).start();
-	});
+	};
+	
+	document.addEventListener('DOMContentLoaded', newGame);
+	
+	// const resetBtn = document.getElementById('play-again');
+	//
+	// if (resetBtn) {
+	//   debugger
+	//   resetBtn.addEventListener('click', newGame);
+	// }
+	
+	document.getElementById('reset').addEventListener('click', newGame);
 
 
 /***/ },
@@ -126,6 +137,18 @@
 	    });
 	  }
 	
+	  explodeMines() {
+	    for (let i = 0; i < this.mines.length; i++) {
+	      for (let j = i + 1; j < this.mines.length; j++) {
+	        if (this.mines[i].isCollidedWith(this.mines[j])) {
+	          debugger
+	          this.remove(this.mines[i]);
+	          this.remove(this.mines[j]);
+	        }
+	      }
+	    }
+	  }
+	
 	  findCoin() {
 	    if (this.coin.isCollidedWith(this.ship)) {
 	      this.remove(this.coin);
@@ -147,12 +170,15 @@
 	  remove(obj) {
 	    if (obj instanceof Coin) {
 	      this.coin = new Coin({ game: this });
+	    } if (obj instanceof Mine) {
+	      this.mines.splice(this.mines.indexOf(obj), 1);
 	    }
 	  }
 	
 	  step(delta) {
 	    this.moveObjects(delta);
 	    this.findCoin();
+	    this.explodeMines();
 	  }
 	}
 	
@@ -327,8 +353,10 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	const Game = __webpack_require__(1);
+	
 	class GameView {
 	  constructor(game, ctx) {
 	    this.ctx = ctx;
@@ -351,7 +379,11 @@
 	  }
 	
 	  loseFn() {
-	    document.getElementById('lost').innerHTML = 'You lose!';
+	    let losshtml = '<p>You lose!</p>';
+	    losshtml += '<button id="play-again">Play Again</button>';
+	
+	    document.getElementById('lost').innerHTML = losshtml;
+	    document.getElementById('play-again').addEventListener('click', () => {console.log('hi');});
 	  }
 	
 	  start() {
@@ -361,18 +393,18 @@
 	  }
 	
 	  animate(time) {
-	    const delta = time - this.prevTime;
-	
-	    this.game.step(delta);
-	    this.game.draw(this.ctx);
-	    this.prevTime = time;
-	    this.renderScore();
-	
 	    if (this.game.playerLost()) {
 	      this.loseFn();
-	    }
+	    } else {
+	      const delta = time - this.prevTime;
 	
-	    requestAnimationFrame(this.animate.bind(this));
+	      this.game.step(delta);
+	      this.game.draw(this.ctx);
+	      this.prevTime = time;
+	      this.renderScore();
+	
+	      requestAnimationFrame(this.animate.bind(this));
+	    }
 	  }
 	}
 	
