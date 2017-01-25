@@ -141,7 +141,6 @@
 	    for (let i = 0; i < this.mines.length; i++) {
 	      for (let j = i + 1; j < this.mines.length; j++) {
 	        if (this.mines[i].isCollidedWith(this.mines[j])) {
-	          debugger
 	          this.remove(this.mines[i]);
 	          this.remove(this.mines[j]);
 	        }
@@ -165,6 +164,13 @@
 	      }
 	    });
 	    return result;
+	  }
+	
+	  reset() {
+	    this.addShip();
+	    this.mines = [];
+	    this.coin = new Coin({ game: this });
+	    this.score = 0;
 	  }
 	
 	  remove(obj) {
@@ -214,29 +220,23 @@
 	      this.speed += 1.5;
 	    } else if (impulse === 'left') {
 	      this.dir = Util.rotate(this.dir, -0.2);
-	      // this.rotate(ctx, -0.2, this.img);
 	    } else if (impulse === 'right') {
 	      this.dir = Util.rotate(this.dir, 0.2);
-	      // this.rotate(ctx, 0.2, this.img);
 	    }
 	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	
-	  rotate(ctx, rad) {
-	    // ctx.clearRect(0,0,1000,600);
-	    // ctx.save();
-	    // ctx.translate(1000/2,600/2);
-	    // ctx.rotate(rad);
-	    // this.draw(ctx);
-	    // ctx.restore();
+	  draw(ctx) {
+	    ctx.save();
+	    ctx.translate(this.pos[0], this.pos[1]);
+	    ctx.rotate(Util.angle(this.dir) - 1.5708);
+	    ctx.translate(-this.pos[0], -this.pos[1]);
+	    ctx.drawImage(this.img, this.pos[0] - this.width / 2, this.pos[1] - this.height / 2, this.width, this.height);
+	    ctx.restore();
 	  }
 	
 	  // drag() {
-	  //   if (this.speed > 0) {
-	  //     this.speed -= 0.1;
-	  //   } else if (this.speed < 0) {
-	  //     this.speed += 0.1;
-	  //   }
+	  //   this.speed *= 0.99;
 	  //   this.vel = Util.calcVel(this.dir, this.speed);
 	  // }
 	}
@@ -279,6 +279,10 @@
 	    );
 	  },
 	
+	  angle(dir) {
+	    return Math.atan(dir[1] / dir[0]);
+	  },
+	
 	  rotate (dir, rad) {
 	    let newX = (dir[0] * Math.cos(rad)) - (dir[1] * Math.sin(rad));
 	    let newY = (dir[1] * Math.cos(rad)) + (dir[0] * Math.sin(rad));
@@ -313,7 +317,7 @@
 	  }
 	
 	  draw(ctx) {
-	    ctx.drawImage(this.img, this.pos[0], this.pos[1], this.width, this.height);
+	    ctx.drawImage(this.img, this.pos[0] - this.width / 2, this.pos[1] - this.height / 2, this.width, this.height);
 	  }
 	
 	  move(delta) {
@@ -322,28 +326,29 @@
 	    let offsetY = this.vel[1] * velScale;
 	
 	    this.pos = [this.pos[0] + offsetX, this.pos[1] + offsetY];
-	    if (this.pos[0] < 0) {
-	      this.pos[0] = 0;
+	    if (this.pos[0] < this.width / 2) {
+	      this.pos[0] = this.width / 2;
 	      this.speed = 0;
-	    } else if (this.pos[0] > (this.game.max_width - this.width)) {
-	      this.pos[0] = this.game.max_width - this.width;
+	    } else if (this.pos[0] > (this.game.max_width - this.width / 2)) {
+	      this.pos[0] = this.game.max_width - this.width / 2;
 	      this.speed = 0;
-	    } else if (this.pos[1] < 0) {
-	      this.pos[1] = 0;
+	    } else if (this.pos[1] < this.height / 2) {
+	      this.pos[1] = this.height / 2;
 	      this.speed = 0;
-	    } else if (this.pos[1] > (this.game.max_height - this.height)) {
-	      this.pos[1] = this.game.max_height - this.height;
+	    } else if (this.pos[1] > (this.game.max_height - this.height / 2)) {
+	      this.pos[1] = this.game.max_height - this.height / 2;
 	      this.speed = 0;
 	    }
+	
 	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	
 	  isCollidedWith(otherObject) {
-	    let selfCenter = [this.pos[0] + (this.width / 2),
-	      this.pos[1] + (this.height / 2)];
-	    let otherCenter = [otherObject.pos[0] + (otherObject.width / 2),
-	      otherObject.pos[1] + (otherObject.height / 2)];
-	    let centerDist = Util.dist(selfCenter, otherCenter);
+	    let selfCenter = [this.pos[0] - (this.width / 2),
+	      this.pos[1] - (this.height / 2)];
+	    let otherCenter = [otherObject.pos[0] - (otherObject.width / 2),
+	      otherObject.pos[1] - (otherObject.height / 2)];
+	    let centerDist = Util.dist(this.pos, otherObject.pos);
 	    return centerDist < (this.width / 2 + otherObject.width / 2);
 	  }
 	}
@@ -383,7 +388,12 @@
 	    losshtml += '<button id="play-again">Play Again</button>';
 	
 	    document.getElementById('lost').innerHTML = losshtml;
-	    document.getElementById('play-again').addEventListener('click', () => {console.log('hi');});
+	    document.getElementById('play-again').addEventListener('click', () => {
+	      this.game.reset();
+	      this.ship = this.game.ship;
+	      document.getElementById('lost').innerHTML = '';
+	      this.start();
+	    });
 	  }
 	
 	  start() {
