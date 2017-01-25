@@ -69,37 +69,36 @@
 	class Game {
 	  constructor() {
 	    this.mines = [];
-	    this.coins = [];
-	    this.ships = [];
+	    this.coin = new Coin({ game: this });
+	    this.ship = null;
 	    this.max_width = Game.DIM_X;
 	    this.max_height = Game.DIM_Y;
-	
-	    this.addCoin();
+	    this.score = 0;
 	  }
 	
-	  add(obj) {
-	    if (obj instanceof Ship) {
-	      this.ships.push(obj);
-	    } else if (obj instanceof Coin) {
-	      this.coins.push(obj);
-	    }
-	  }
+	  // add(obj) {
+	  //   if (obj instanceof Ship) {
+	  //     this.ships.push(obj);
+	  //   } else if (obj instanceof Coin) {
+	  //     this.coins.push(obj);
+	  //   }
+	  // }
 	
-	  addCoin() {
-	    const coin = new Coin({
-	      game: this
-	    });
-	
-	    this.add(coin);
-	    return coin;
-	  }
+	  // addCoin() {
+	  //   const coin = new Coin({
+	  //     game: this
+	  //   });
+	  //
+	  //   this.add(coin);
+	  //   return coin;
+	  // }
 	
 	  addShip() {
 	    const ship = new Ship({
 	      game: this
 	    });
 	
-	    this.add(ship);
+	    this.ship = ship;
 	    return ship;
 	  }
 	
@@ -111,20 +110,22 @@
 	  }
 	
 	  allObjects() {
-	    return [].concat(this.ships, this.coins, this.mines);
+	    return [].concat([this.ship], [this.coin], this.mines);
 	  }
 	
 	  moveObjects(delta) {
 	    this.allObjects().forEach((obj) => {
 	      obj.move(delta);
 	    });
-	    this.ships.forEach((ship) => {
-	      ship.drag();
-	    });
+	    // this.ships.forEach((ship) => {
+	    //   ship.drag();
+	    // });
 	  }
 	
 	  draw(ctx) {
 	    ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
+	    // let bgimg = document.getElementById('bg');
+	    // ctx.fillStyle = ctx.createPattern(bgimg, 'repeat-y');
 	    ctx.fillStyle = Game.BG_COLOR;
 	    ctx.fillRect(0, 0, Game.DIM_X, Game.DIM_Y);
 	    this.allObjects().forEach((obj) => {
@@ -132,14 +133,22 @@
 	    });
 	  }
 	
+	  checkCollisions() {
+	    if (this.coin.isCollidedWith(this.ship)) {
+	      this.remove(this.coin);
+	      this.score += 1;
+	    }
+	  }
+	
 	  remove(obj) {
-	    if (obj instanceof Ship) {
-	      this.ships.splice(this.ships.indexOf(obj), 1);
+	    if (obj instanceof Coin) {
+	      this.coin = new Coin({ game: this });
 	    }
 	  }
 	
 	  step(delta) {
 	    this.moveObjects(delta);
+	    this.checkCollisions();
 	  }
 	}
 	
@@ -159,7 +168,6 @@
 	
 	class Ship extends MovingObject {
 	  constructor(options = {}) {
-	    options.color = '#000000';
 	    options.pos = [500, 500];
 	    options.radius = 15;
 	    options.dir = [0, 1];
@@ -197,14 +205,18 @@
 	    ctx.drawImage(this.img, this.pos[0], this.pos[1], 30, 30);
 	  }
 	
-	  drag() {
-	    if (this.speed > 0) {
-	      this.speed -= 0.1;
-	    } else if (this.speed < 0) {
-	      this.speed += 0.1;
-	    }
-	    this.vel = Util.calcVel(this.dir, this.speed);
+	  isCollidedWith(otherObj) {
+	
 	  }
+	
+	  // drag() {
+	  //   if (this.speed > 0) {
+	  //     this.speed -= 0.1;
+	  //   } else if (this.speed < 0) {
+	  //     this.speed += 0.1;
+	  //   }
+	  //   this.vel = Util.calcVel(this.dir, this.speed);
+	  // }
 	}
 	
 	module.exports = Ship;
@@ -316,9 +328,14 @@
 	    }
 	  }
 	
-	  remove() {
-	    this.game.remove(this);
+	  isCollidedWith(otherObject) {
+	    const centerDist = Util.dist(this.pos, otherObject.pos);
+	    return centerDist < (this.radius + otherObject.radius);
 	  }
+	
+	  // remove() {
+	  //   this.game.remove(this);
+	  // }
 	}
 	
 	module.exports = MovingObject;
@@ -329,7 +346,7 @@
 /***/ function(module, exports) {
 
 	class GameView {
-	  constructor(game, ctx) {
+	  constructor(game, ctx, score) {
 	    this.ctx = ctx;
 	    this.game = game;
 	    this.ship = this.game.addShip();
@@ -357,6 +374,7 @@
 	    this.game.step(delta);
 	    this.game.draw(this.ctx);
 	    this.prevTime = time;
+	    document.getElementById('score').innerHTML = this.game.score;
 	
 	    requestAnimationFrame(this.animate.bind(this));
 	  }
@@ -380,7 +398,6 @@
 	    options.radius = 10;
 	    options.dir = [1, 0];
 	    options.speed = 0;
-	    options.vel = [0, 0];
 	    super(options);
 	  }
 	
