@@ -127,9 +127,9 @@
 	    this.allObjects().forEach((obj) => {
 	      obj.move(delta);
 	    });
-	    // this.ships.forEach((ship) => {
-	    //   ship.drag();
-	    // });
+	    this.mines.forEach((mine) => {
+	      mine.stalk(this.ship.pos);
+	    });
 	  }
 	
 	  draw(ctx) {
@@ -235,9 +235,12 @@
 /***/ function(module, exports) {
 
 	const Util = {
-	  dir (vec) {
-	    const norm = Util.norm(vec);
-	    return Util.scale(vec, 1 / norm);
+	  dir (ref, target) {
+	    // const norm = Util.norm(vec);
+	    // return Util.scale(vec, 1 / norm);
+	    let dirVec = [target[0] - ref[0], target[1] - ref[1]];
+	    const norm = Util.norm(dirVec);
+	    return Util.scale(dirVec, 1 / norm);
 	  },
 	
 	  dist (pos1, pos2) {
@@ -442,6 +445,13 @@
 	
 	  draw(ctx) {
 	    ctx.drawImage(this.img, this.pos[0], this.pos[1], 30, 30);
+	  }
+	
+	  stalk(shipPos) {
+	    let dist = Util.dist(this.pos, shipPos);
+	    this.dir = Util.dir(this.pos, shipPos);
+	    this.speed = 75 / dist;
+	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	}
 	
