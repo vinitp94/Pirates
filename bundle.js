@@ -126,14 +126,22 @@
 	    });
 	  }
 	
-	  checkCollisions() {
+	  findCoin() {
 	    if (this.coin.isCollidedWith(this.ship)) {
 	      this.remove(this.coin);
 	      this.score += 1;
 	      this.addMine();
 	    }
+	  }
 	
-	
+	  playerLost() {
+	    let result = false;
+	    this.mines.forEach((mine) => {
+	      if (mine.isCollidedWith(this.ship)) {
+	        result = true;
+	      }
+	    });
+	    return result;
 	  }
 	
 	  remove(obj) {
@@ -144,7 +152,7 @@
 	
 	  step(delta) {
 	    this.moveObjects(delta);
-	    this.checkCollisions();
+	    this.findCoin();
 	  }
 	}
 	
@@ -322,7 +330,7 @@
 /***/ function(module, exports) {
 
 	class GameView {
-	  constructor(game, ctx, score) {
+	  constructor(game, ctx) {
 	    this.ctx = ctx;
 	    this.game = game;
 	    this.ship = this.game.addShip();
@@ -338,6 +346,14 @@
 	    });
 	  }
 	
+	  renderScore() {
+	    document.getElementById('score').innerHTML = this.game.score;
+	  }
+	
+	  loseFn() {
+	    document.getElementById('lost').innerHTML = 'You lose!';
+	  }
+	
 	  start() {
 	    this.bindKeyHandlers();
 	    this.prevTime = 0;
@@ -350,7 +366,11 @@
 	    this.game.step(delta);
 	    this.game.draw(this.ctx);
 	    this.prevTime = time;
-	    document.getElementById('score').innerHTML = this.game.score;
+	    this.renderScore();
+	
+	    if (this.game.playerLost()) {
+	      this.loseFn();
+	    }
 	
 	    requestAnimationFrame(this.animate.bind(this));
 	  }
