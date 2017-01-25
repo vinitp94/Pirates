@@ -132,6 +132,8 @@
 	      this.score += 1;
 	      this.addMine();
 	    }
+	
+	
 	  }
 	
 	  remove(obj) {
