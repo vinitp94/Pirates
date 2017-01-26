@@ -394,18 +394,12 @@
 	
 	  loseFn() {
 	    let losshtml = '<p>Aarrrghhh! You lose!</p>';
-	    losshtml += '<button id="play-again">Play Again</button>';
-	
-	    let starthtml = '<p>Press ENTER to start!</p>';
+	    losshtml += '<p>Press ENTER to play again!</p>';
 	
 	    document.getElementById('lose-modal').innerHTML = losshtml;
-	    document.getElementById('play-again').addEventListener('click', () => {
-	      this.game.reset();
-	      this.ship = this.game.ship;
-	      document.getElementById('lose-modal').innerHTML = '';
-	      document.getElementById('start-modal').innerHTML = starthtml;
-	      this.bindEnter();
-	    });
+	    this.game.reset();
+	    this.ship = this.game.ship;
+	    this.bindEnter();
 	  }
 	
 	  begin() {
@@ -419,6 +413,7 @@
 	  start() {
 	    this.unbindEnter();
 	    document.getElementById('start-modal').innerHTML = '';
+	    document.getElementById('lose-modal').innerHTML = '';
 	    this.bindKeyHandlers();
 	    this.prevTime = 0;
 	    requestAnimationFrame(this.animate.bind(this));
