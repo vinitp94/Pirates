@@ -69,14 +69,34 @@
 	const Mine = __webpack_require__(7);
 	const Util = __webpack_require__(3);
 	
+	const muteContainer = document.getElementById('sound');
+	const muteBtn = muteContainer.children[0];
+	
+	muteBtn.addEventListener('click', () => {
+	  if (muteBtn.id === 'sound-on') {
+	    muteBtn.id = 'sound-off';
+	    muteBtn.src = './assets/sound_off.png';
+	
+	  } else {
+	    muteBtn.id = 'sound-on';
+	    muteBtn.src = './assets/sound_on.png';
+	  }
+	});
+	
+	const coinSnd = new Audio('./assets/coin_sound.wav');
+	const expSnd = new Audio('./assets/explosion_sound.wav');
+	
 	class Game {
 	  constructor() {
 	    this.mines = [];
 	    this.coin = new Coin({ game: this });
 	    this.ship = null;
-	    this.max_width = Game.DIM_X;
-	    this.max_height = Game.DIM_Y;
+	    this.maxWidth = Game.DIM_X;
+	    this.maxHeight = Game.DIM_Y;
 	    this.score = 0;
+	
+	    this.coinSound = coinSnd;
+	    this.explosionSound = expSnd;
 	  }
 	
 	  addShip() {
@@ -126,10 +146,17 @@
 	    });
 	  }
 	
+	  soundOn() {
+	    return (document.getElementById('sound').children[0].id === 'sound-on');
+	  }
+	
 	  explodeMines() {
 	    for (let i = 0; i < this.mines.length; i++) {
 	      for (let j = i + 1; j < this.mines.length; j++) {
 	        if (this.mines[i].isCollidedWith(this.mines[j])) {
+	          if (this.soundOn()) {
+	            this.explosionSound.play();
+	          }
 	          this.remove(this.mines[i]);
 	          this.remove(this.mines[j]);
 	        }
@@ -140,7 +167,10 @@
 	  findCoin() {
 	    if (this.coin.isCollidedWith(this.ship)) {
 	      this.remove(this.coin);
-	      this.score += 1;
+	      this.score += 100;
+	      if (this.soundOn()) {
+	        this.coinSound.play();
+	      }
 	      this.addMine();
 	    }
 	  }
@@ -149,6 +179,10 @@
 	    let result = false;
 	    this.mines.forEach((mine) => {
 	      if (mine.isCollidedWith(this.ship)) {
+	        if (this.soundOn()) {
+	          this.explosionSound.play();
+	        }
+	        this.remove(mine);
 	        result = true;
 	      }
 	    });
@@ -204,9 +238,9 @@
 	
 	  propel(impulse, ctx) {
 	    if (impulse === 'up' && this.speed > -10) {
-	      this.speed -= 1.5;
+	      this.speed -= 2;
 	    } else if (impulse === 'down' && this.speed < 10) {
-	      this.speed += 1.5;
+	      this.speed += 2;
 	    } else if (impulse === 'left') {
 	      this.dir = Util.rotate(this.dir, -0.2);
 	    } else if (impulse === 'right') {
@@ -229,7 +263,7 @@
 	  }
 	
 	  drag() {
-	    this.speed *= 0.999;
+	    this.speed *= 0.995;
 	    this.vel = Util.calcVel(this.dir, this.speed);
 	  }
 	}
@@ -322,14 +356,14 @@
 	    if (this.pos[0] < this.width / 2) {
 	      this.pos[0] = this.width / 2;
 	      this.speed = 0;
-	    } else if (this.pos[0] > (this.game.max_width - this.width / 2)) {
-	      this.pos[0] = this.game.max_width - this.width / 2;
+	    } else if (this.pos[0] > (this.game.maxWidth - this.width / 2)) {
+	      this.pos[0] = this.game.maxWidth - this.width / 2;
 	      this.speed = 0;
 	    } else if (this.pos[1] < this.height / 2) {
 	      this.pos[1] = this.height / 2;
 	      this.speed = 0;
-	    } else if (this.pos[1] > (this.game.max_height - this.height / 2)) {
-	      this.pos[1] = this.game.max_height - this.height / 2;
+	    } else if (this.pos[1] > (this.game.maxHeight - this.height / 2)) {
+	      this.pos[1] = this.game.maxHeight - this.height / 2;
 	      this.speed = 0;
 	    }
 	
@@ -393,8 +427,8 @@
 	  }
 	
 	  loseFn() {
-	    let losshtml = '<p>Aarrrghhh! You lose!</p>';
-	    losshtml += '<p>Press ENTER to play again!</p>';
+	    let losshtml = '<h2>Aarrrghhh! You wrecked me ship!</h2>';
+	    losshtml += '<h3>Press ENTER to play again!</h3>';
 	
 	    document.getElementById('lose-modal').innerHTML = losshtml;
 	    this.game.reset();
@@ -404,7 +438,11 @@
 	
 	  begin() {
 	    let introhtml = '<h2>Aye matey! Welcome to the sea of doom.</h2>';
-	    introhtml += '<p>Press ENTER to begin!</p>';
+	    introhtml += '<p>Instructions: Use </p>';
+	    introhtml += "<img src='./assets/arrow_keys.png'/>";
+	    introhtml += '<p> to collect as much treasure as possible.</p>';
+	    introhtml += '<p>Oh, and beware of the mines!</p>';
+	    introhtml += '<h3>Press ENTER to begin!</h3>';
 	    document.getElementById('start-modal').innerHTML = introhtml;
 	    this.game.draw(this.ctx);
 	    this.bindEnter();
