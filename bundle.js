@@ -54,12 +54,10 @@
 	
 	  const ctx = canvasEl.getContext('2d');
 	  const game = new Game();
-	  new GameView(game, ctx).start();
+	  new GameView(game, ctx).begin();
 	};
 	
 	document.addEventListener('DOMContentLoaded', newGame);
-	
-	document.getElementById('reset').addEventListener('click', newGame);
 
 
 /***/ },
@@ -375,6 +373,16 @@
 	    });
 	  }
 	
+	  bindEnter() {
+	    key('enter', () => {
+	      this.start();
+	    });
+	  }
+	
+	  unbindEnter() {
+	    key.unbind('enter');
+	  }
+	
 	  renderScores() {
 	    document.getElementById('score').innerHTML = this.game.score;
 	
@@ -385,19 +393,32 @@
 	  }
 	
 	  loseFn() {
-	    let losshtml = '<p>You lose!</p>';
+	    let losshtml = '<p>Aarrrghhh! You lose!</p>';
 	    losshtml += '<button id="play-again">Play Again</button>';
 	
-	    document.getElementById('lost').innerHTML = losshtml;
+	    let starthtml = '<p>Press ENTER to start!</p>';
+	
+	    document.getElementById('lose-modal').innerHTML = losshtml;
 	    document.getElementById('play-again').addEventListener('click', () => {
 	      this.game.reset();
 	      this.ship = this.game.ship;
-	      document.getElementById('lost').innerHTML = '';
-	      this.start();
+	      document.getElementById('lose-modal').innerHTML = '';
+	      document.getElementById('start-modal').innerHTML = starthtml;
+	      this.bindEnter();
 	    });
 	  }
 	
+	  begin() {
+	    let introhtml = '<h2>Aye matey! Welcome to the sea of doom.</h2>';
+	    introhtml += '<p>Press ENTER to begin!</p>';
+	    document.getElementById('start-modal').innerHTML = introhtml;
+	    this.game.draw(this.ctx);
+	    this.bindEnter();
+	  }
+	
 	  start() {
+	    this.unbindEnter();
+	    document.getElementById('start-modal').innerHTML = '';
 	    this.bindKeyHandlers();
 	    this.prevTime = 0;
 	    requestAnimationFrame(this.animate.bind(this));
