@@ -121,10 +121,8 @@
 	
 	  draw(ctx) {
 	    ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
-	    // let bgimg = document.getElementById('bg');
-	    // ctx.fillStyle = ctx.createPattern(bgimg, 'repeat-y');
-	    ctx.fillStyle = Game.BG_COLOR;
-	    ctx.fillRect(0, 0, Game.DIM_X, Game.DIM_Y);
+	    const img = document.getElementById('bg');
+	    ctx.drawImage(img, 0, 0, Game.DIM_X, Game.DIM_Y);
 	    this.allObjects().forEach((obj) => {
 	      obj.draw(ctx);
 	    });
@@ -184,7 +182,6 @@
 	
 	Game.DIM_X = 1000;
 	Game.DIM_Y = 600;
-	Game.BG_COLOR = '#f5f5f5';
 	
 	module.exports = Game;
 
