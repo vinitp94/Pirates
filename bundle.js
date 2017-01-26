@@ -362,6 +362,7 @@
 	    this.ctx = ctx;
 	    this.game = game;
 	    this.ship = this.game.addShip();
+	    this.highscore = 0;
 	  }
 	
 	  bindKeyHandlers() {
@@ -374,8 +375,13 @@
 	    });
 	  }
 	
-	  renderScore() {
+	  renderScores() {
 	    document.getElementById('score').innerHTML = this.game.score;
+	
+	    if (this.game.score >= this.highscore) {
+	      this.highscore = this.game.score;
+	    }
+	    document.getElementById('high-score').innerHTML = this.highscore;
 	  }
 	
 	  loseFn() {
@@ -406,7 +412,7 @@
 	      this.game.step(delta);
 	      this.game.draw(this.ctx);
 	      this.prevTime = time;
-	      this.renderScore();
+	      this.renderScores();
 	
 	      requestAnimationFrame(this.animate.bind(this));
 	    }
