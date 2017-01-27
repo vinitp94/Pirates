@@ -4,14 +4,17 @@
 
 Pirates is a simple single player game in which the purpose, as the pirate, is to plunder as much treasure as possible without being hit by floating mines. The controls are simple, involving only the four arrow keys; forward and back move the ship in the respective directions, and left and right rotate the ship in its static position. Every time a treasure is claimed, a new mine is added to the playing field. In addition, the mines are intelligent and move towards the pirate ship.
 
+The game can be played [here](https://www.google.com).
+
+
 ### Functionality & MVP
 
 In this game of Pirates, users are able to:
 
-- [ ] Start a new game and play again after losing
-- [ ] Keep track of their total score and high score for the session
-- [ ] Toggle between having sound effects on or off
-- [ ] Play by moving the ship using four arrow keys
+- Start a new game and play again after losing
+- Keep track of their total score and high score for the session
+- Toggle between having sound effects on or off
+- Play by moving the ship using four arrow keys
 
 ![landing](./assets/screenshots/landing.png)
 
