@@ -8,18 +8,18 @@ Pirates is a simple single player game in which the purpose, as the pirate, is t
 
 In this game of Pirates, users will be able to:
 
-- [ ] Start, pause, and reset the game
-- [ ] Keep track of their total score
-- [ ] Play by moving player using four arrow keys
+- [ ] Start a new game and play again after losing
+- [ ] Keep track of their total score and high score for the session
+- [ ] Play by moving the ship using four arrow keys
 
 The project will also include:
 
-- [ ] An intro describing the rules of the game, the controls, and which difficulty the user would like to play
-- [ ] A production Readme
+- [ ] An intro describing the purpose of the game and the controls
+- [ ] A production ReadMe
 
 ### Wireframes
 
-The game will consist of one screen with a game board, controls listed on the side, and scorecard listed at the top. Start, pause, and reset buttons will also be displayed outside the game board for the user's convenience. Links to my Github and Linkedin will be included as well.
+The game will consist of one screen with a game board as well as a scorecard listed at the top. The game does not involve multiple levels or complicated gameplay, so commencement is simple; the user must enter to begin playing and upon loss, press enter to play again. Links to my Github and Linkedin will be included as well.
 
 ![wireframes](./wireframe.png)
 
@@ -29,7 +29,7 @@ The following technologies will be used for this project:
 
 - Vanilla javascript and 'jQuery' for overall game structure
 - 'HTML5 Canvas' for DOM manipulation and rendering
-- Webpack to bundle and serve various scripts
+- Webpack to bundle up various scripts
 
 In addition to the webpack entry file, the following files will be included:
 
