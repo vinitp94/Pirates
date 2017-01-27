@@ -53,6 +53,11 @@
 	  canvasEl.height = Game.DIM_Y;
 	
 	  const ctx = canvasEl.getContext('2d');
+	  let img = document.getElementById('bg');
+	  img.onload = () => {
+	    ctx.drawImage(img, 0, 0, Game.DIM_X, Game.DIM_Y);
+	  };
+	
 	  const game = new Game();
 	  new GameView(game, ctx).begin();
 	};
@@ -138,8 +143,9 @@
 	
 	  draw(ctx) {
 	    ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
-	    const img = document.getElementById('bg');
+	    let img = document.getElementById('bg');
 	    ctx.drawImage(img, 0, 0, Game.DIM_X, Game.DIM_Y);
+	
 	    this.allObjects().forEach((obj) => {
 	      obj.draw(ctx);
 	    });
