@@ -1,4 +1,4 @@
-## Pirates
+# Pirates
 
 ### Background
 
@@ -30,14 +30,14 @@ Pirates is made simply with pure vanilla JavaScript along with HTML5 Canvas. No 
 
 Some possible improvements to the game include:
 
-##### Add Difficulty Options
+#### Add Difficulty Options
 
 Users can choose their difficulty between easy, medium, or hard. Another option is to increase the speed of the enemy mines as the user's score increases or to add whirlpools to pull and destroy the user's ship.
 
-##### Multiple Treasures
+#### Multiple Treasures
 
 Rather than having only one type of coin as treasure, coins worth different amounts can randomly spawn. Another possible feature is to spawn coins of higher value and only keep them available for a limited period of time.
 
-##### Obstacles
+#### Obstacles
 
 In addition to mines, it would be possible to include additional obstacles, possibly for the more difficult levels of the game.
