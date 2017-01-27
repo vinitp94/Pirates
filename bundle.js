@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Game = __webpack_require__(1);
-	const GameView = __webpack_require__(5);
+	const GameView = __webpack_require__(7);
 	
 	const newGame = () => {
 	  const canvasEl = document.getElementsByTagName('canvas')[0];
@@ -70,8 +70,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Ship = __webpack_require__(2);
-	const Coin = __webpack_require__(6);
-	const Mine = __webpack_require__(7);
+	const Coin = __webpack_require__(5);
+	const Mine = __webpack_require__(6);
 	const Util = __webpack_require__(3);
 	
 	const muteBtn = document.getElementById('sound').children[0];
@@ -79,7 +79,7 @@
 	muteBtn.addEventListener('click', () => {
 	  if (muteBtn.id === 'sound-on') {
 	    muteBtn.id = 'sound-off';
-	    muteBtn.src = './assets/sound_off.png';
+	    muteBtn.src = './assets/images/sound_off.png';
 	
 	  } else {
 	    muteBtn.id = 'sound-on';
@@ -87,8 +87,8 @@
 	  }
 	});
 	
-	const coinSnd = new Audio('./assets/coin_sound.wav');
-	const expSnd = new Audio('./assets/explosion_sound.wav');
+	const coinSnd = new Audio('./assets/audio/coin_sound.wav');
+	const expSnd = new Audio('./assets/audio/explosion_sound.wav');
 	
 	class Game {
 	  constructor() {
@@ -340,7 +340,6 @@
 	    this.dir = options.dir;
 	    this.color = options.color;
 	    this.speed = options.speed;
-	    this.radius = options.radius;
 	    this.game = options.game;
 	    this.img = options.img;
 	    this.width = options.width;
@@ -390,6 +389,57 @@
 
 /***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const MovingObject = __webpack_require__(4);
+	
+	class Coin extends MovingObject {
+	  constructor(options = {}) {
+	    options.color = '#ffd700';
+	    options.pos = options.game.randomPosition();
+	    options.dir = [1, 0];
+	    options.speed = 0;
+	    options.width = 20;
+	    options.height = 20;
+	    options.img = document.getElementById('mycoin');
+	    super(options);
+	  }
+	}
+	
+	module.exports = Coin;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const Util = __webpack_require__(3);
+	const MovingObject = __webpack_require__(4);
+	
+	class Mine extends MovingObject {
+	  constructor(options = {}) {
+	    options.pos = options.game.randomPosition();
+	    options.dir = [0, 1];
+	    options.speed = 0;
+	    options.width = 30;
+	    options.height = 30;
+	    options.img = document.getElementById('mymine');
+	    super(options);
+	  }
+	
+	  stalk(shipPos) {
+	    let dist = Util.dist(this.pos, shipPos);
+	    this.dir = Util.dir(this.pos, shipPos);
+	    this.speed = 75 / dist;
+	    this.vel = Util.calcVel(this.dir, this.speed);
+	  }
+	}
+	
+	module.exports = Mine;
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const Game = __webpack_require__(1);
@@ -479,58 +529,6 @@
 	GameView.DIRS = ['up', 'down', 'left', 'right'];
 	
 	module.exports = GameView;
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	const MovingObject = __webpack_require__(4);
-	
-	class Coin extends MovingObject {
-	  constructor(options = {}) {
-	    options.color = '#ffd700';
-	    options.pos = options.game.randomPosition();
-	    options.radius = 10;
-	    options.dir = [1, 0];
-	    options.speed = 0;
-	    options.width = 20;
-	    options.height = 20;
-	    options.img = document.getElementById('mycoin');
-	    super(options);
-	  }
-	}
-	
-	module.exports = Coin;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	const Util = __webpack_require__(3);
-	const MovingObject = __webpack_require__(4);
-	
-	class Mine extends MovingObject {
-	  constructor(options = {}) {
-	    options.pos = options.game.randomPosition();
-	    options.dir = [0, 1];
-	    options.speed = 0;
-	    options.width = 30;
-	    options.height = 30;
-	    options.img = document.getElementById('mymine');
-	    super(options);
-	  }
-	
-	  stalk(shipPos) {
-	    let dist = Util.dist(this.pos, shipPos);
-	    this.dir = Util.dir(this.pos, shipPos);
-	    this.speed = 75 / dist;
-	    this.vel = Util.calcVel(this.dir, this.speed);
-	  }
-	}
-	
-	module.exports = Mine;
 
 
 /***/ }

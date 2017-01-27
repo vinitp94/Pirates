@@ -6,7 +6,7 @@ body {
   height: 100vh;
   padding: 0px;
   margin: 0px;
-  background: url('./page_bg.png');
+  background: url('../images/page_bg.png');
   background-size: 100vw 100vh;
 }
 
