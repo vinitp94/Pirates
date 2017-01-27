@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Pirates</title>
-    <h1>Pirates</h1>
+    <link href="https://fonts.googleapis.com/css?family=Aclonica" rel="stylesheet">
     <link rel="stylesheet" href="./assets/pirates.css">
   </head>
   <body>
@@ -12,31 +12,45 @@
     <img id='mymine' src='./assets/mine.png' height=0 width=0 />
     <img id='mycoin' src='./assets/coin.png' height=0 width=0 />
 
-    <div id='instructions'>
+    <div id='header'>
+      <h1>Pirates</h1>
     </div>
 
     <div id='scores-sound'>
-      <div id='reg-score'>
-        <p>Score: </p>
-        <p id='score'></p>
-      </div>
       <div id='record-score'>
         <p>High Score: </p>
         <p id='high-score'></p>
       </div>
+      <div id='reg-score'>
+        <p>Score: </p>
+        <p id='score'></p>
+      </div>
       <div id='sound'>
         <img id='sound-on' src='./assets/sound_on.png'><img/>
       </div>
-
     </div>
 
-    <div id='start-modal'>
+
+    <div id='main'>
+      <div id='start-modal'>
+      </div>
+      <div id='lose-modal'>
+      </div>
+      <canvas id='mycanvas'>
+      </canvas>
     </div>
 
-    <div id='lose-modal'>
+    <div id='footer'>
+      <p>This game was developed by Vinit Parikh.</p>
+      <div id='links'>
+        <a href='https://github.com/vinitp94'>
+          <img src='https://res.cloudinary.com/dlhshbg79/image/upload/v1484785761/Logomakr_0gmJzG_orzjyt.png' />
+        </a>
+        <a id='linkedin' href='https://www.linkedin.com/in/vinit-parikh-67b7a27b'>
+          <img src='https://res.cloudinary.com/dlhshbg79/image/upload/v1484785988/Logomakr_2oAfUw_arivhn.png' />
+        </a>
+      </div>
     </div>
-
-    <canvas id='mycanvas'></canvas>
 
     <script type="application/javascript" src="vendor/keymaster.js"></script>
     <script type="application/javascript" src="bundle.js"></script>
