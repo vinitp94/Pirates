@@ -41,13 +41,11 @@ canvas {
   opacity: 0.8;
   z-index: 100;
   border-radius: 10px;
-  max-height: 26vw;
   overflow-y: scroll;
 }
 
-#start-modal img {
-  width: 100px;
-  height: 50px;
+#start-modal > *, #lose-modal > * {
+  margin: 30px;
 }
 
 #scores-sound {
@@ -76,6 +74,10 @@ canvas {
 
 #sound {
   width: 35px;
+}
+
+#sound:hover {
+  cursor: pointer;
 }
 
 #sound-on {
