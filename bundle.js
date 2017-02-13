@@ -83,7 +83,7 @@
 	
 	  } else {
 	    muteBtn.id = 'sound-on';
-	    muteBtn.src = './assets/sound_on.png';
+	    muteBtn.src = './assets/images/sound_on.png';
 	  }
 	});
 	
