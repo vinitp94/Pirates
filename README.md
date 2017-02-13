@@ -36,13 +36,36 @@ The moving object class is the parent class of the Ship, Coin, and Mine classes.
 
 The Game class contains most of the actual game logic. It tracks all of the Mine, Coin, and Ship objects in the game, handles collisions, plays sounds, and moves and draws all the objects as well. The actual function that is called repeatedly is Game#step, which is shown below:
 
-![step](./assets/screenshots/step.png)
 
-#### Gameview
+  ```javascript
+  step(delta) {
+    this.moveObjects(delta);
+    this.findCoin();
+    this.explodeMines();
+    this.ship.drag();
+  }
+  ```
 
-The Gameview class contains the code to render and animate the game on the canvas. This class stores a Game object, the Canvas element, the Ship object, and tracks the high score for the session. Keybinding is handled in this file, allowing users to play using the four arrow keys. Window.requestAnimationFrame is utilized to animate the canvas and re-render it quickly enough to allow for smooth gameplay. Upon the player losing, this class called the Game#reset method to set it's attributes to default and allow the user to play again.
+#### GameView
 
-![animate](./assets/screenshots/animate.png)
+The GameView class contains the code to render and animate the game on the canvas. This class stores a Game object, the Canvas element, the Ship object, and tracks the high score for the session. Keybinding is handled in this file, allowing users to play using the four arrow keys. Window.requestAnimationFrame is utilized to animate the canvas and re-render it quickly enough to allow for smooth gameplay. Upon the player losing, this class called the Game#reset method to set it's attributes to default and allow the user to play again.
+
+  ```javascript
+  animate(time) {
+    if (this.game.playerLost()) {
+      this.loseFn();
+    } else {
+      const delta = time - this.prevTime;
+
+      this.game.step(delta);
+      this.game.draw(this.ctx);
+      this.prevTime = time;
+      this.renderScores();
+
+      requestAnimationFrame(this.animate.bind(this));
+    }
+  }
+  ```
 
 ## Architecture and Technologies
 
