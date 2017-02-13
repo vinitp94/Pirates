@@ -17,28 +17,28 @@ In this game of Pirates, users are able to:
 
 ## Implementation
 
-##### File Structure
+#### File Structure
 
 - assets: Includes all imported images and audio files as well as stylesheet
 - docs: Includes implementation timeline and original wireframe/proposal
 - vendor: Includes keymaster file to allow keyboard use
 - lib: Includes all core functionality of game
 
-##### Util
+#### Util
 
 The util file contains most of the calculations needed throughout the game. This includes functions to calculate distance, direction, velocity, angles, and more.
 
-##### Moving Object
+#### Moving Object
 
 The moving object class is the parent class of the Ship, Coin, and Mine classes. They all share the same draw functionality and have the same attributes, including position, speed, the game they are a part of, and more. Individually, the Ship and Mine classes contain their own logic to move the way they do.
 
-##### Game
+#### Game
 
 The Game class contains most of the actual game logic. It tracks all of the Mine, Coin, and Ship objects in the game, handles collisions, plays sounds, and moves and draws all the objects as well. The actual function that is called repeatedly is Game#step, which is shown below:
 
 ![step](./assets/screenshots/step.png)
 
-##### Gameview
+#### Gameview
 
 The Gameview class contains the code to render and animate the game on the canvas. This class stores a Game object, the Canvas element, the Ship object, and tracks the high score for the session. Keybinding is handled in this file, allowing users to play using the four arrow keys. Window.requestAnimationFrame is utilized to animate the canvas and re-render it quickly enough to allow for smooth gameplay. Upon the player losing, this class called the Game#reset method to set it's attributes to default and allow the user to play again.
 
@@ -52,18 +52,18 @@ Pirates is made simply with pure vanilla JavaScript along with HTML5 Canvas. No 
 
 Some possible improvements to the game include:
 
-##### Add Difficulty Options
+#### Add Difficulty Options
 
 - Option 1: Users choose difficulty between easy, medium, hard
 - Option 2: Increase speed of mines as score increases
 - Option 3: Add whirlpools every so often to add another possible way of losing
 
-##### Multiple Treasures
+#### Multiple Treasures
 
 - Spawn coins randomly that are worth different amounts
 - Keep special coins available for limited time
 
-##### Obstacles
+#### Obstacles
 
 - Include obstacles along with difficulty levels
 - Add a maze like setup like Pacman
