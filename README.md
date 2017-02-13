@@ -1,12 +1,10 @@
 # Pirates
 
-### Background
-
 Pirates is a simple single player game in which the purpose, as the pirate, is to plunder as much treasure as possible without being hit by floating mines. The controls are simple, involving only the four arrow keys; forward and back move the ship in the respective directions, and left and right rotate the ship in its static position. Every time a treasure is claimed, a new mine is added to the playing field. In addition, the mines are intelligent and move towards the pirate ship.
 
-This game was one of my favorites on Neopets.com when I was younger, so I decided to clone it! It can be played [here](https://vinitp94.github.io/Pirates/).
+This game was one of my favorites on Neopets.com when I was younger, so I decided to clone it! Play it [here](https://vinitp94.github.io/Pirates/)!
 
-### Functionality & MVP
+## Functionality & MVP
 
 In this game of Pirates, users are able to:
 
@@ -17,7 +15,7 @@ In this game of Pirates, users are able to:
 
 ![landing](./assets/screenshots/landing.png)
 
-### Implementation
+## Implementation
 
 ##### File Structure
 
@@ -46,11 +44,11 @@ The Gameview class contains the code to render and animate the game on the canva
 
 ![animate](./assets/screenshots/animate.png)
 
-### Architecture and Technologies
+## Architecture and Technologies
 
 Pirates is made simply with pure vanilla JavaScript along with HTML5 Canvas. No libraries are included anywhere in the game. Using vanilla DOM manipulation, HTML, and CSS, I implemented full gameplay with clean animations.
 
-### Future Improvements
+## Future Improvements
 
 Some possible improvements to the game include:
 
